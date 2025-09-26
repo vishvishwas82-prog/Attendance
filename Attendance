@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Attendance System</title>
+  <style>
+    body { font-family: Arial; background:#f4f4f4; padding:20px; }
+    table { width:100%; border-collapse: collapse; margin-top:20px; }
+    th, td { border:1px solid #333; padding:10px; text-align:center; }
+    input { border: none; text-align: center; width: 100%; }
+    button { padding:5px 10px; margin:2px; border:none; border-radius:5px; }
+    .present { background:green; color:white; }
+    .absent { background:red; color:white; }
+  </style>
+</head>
+<body>
+  <h2>Attendance System (100 Students)</h2>
+  <table id="attendanceTable">
+    <tr>
+      <th>Roll No</th>
+      <th>Name</th>
+      <th>Status</th>
+    </tr>
+  </table>
+
+  <script>
+    // Example phone numbers for each student
+    let phoneNumbers = {};
+    for (let i = 1; i <= 100; i++) {
+      phoneNumbers[i] = "999000" + String(i).padStart(3, '0'); // Dummy numbers
+    }
+
+    let table = document.getElementById("attendanceTable");
+
+    // Generate 100 student rows
+    for (let i = 1; i <= 100; i++) {
+      let row = table.insertRow();
+      let rollCell = row.insertCell(0);
+      let nameCell = row.insertCell(1);
+      let statusCell = row.insertCell(2);
+
+      rollCell.innerHTML = i;
+      nameCell.innerHTML = `<input type='text' value='Student ${i}'/>`;
+      statusCell.innerHTML = `
+        <button onclick="mark(this, 'present', ${i})">Present</button>
+        <button onclick="mark(this, 'absent', ${i})">Absent</button>
+      `;
+    }
+
+    // Mark attendance + handle SMS
+    function mark(btn, status, rollNo) {
+      let td = btn.parentElement;
+      if (status === "present") {
+        td.innerHTML = "PRESENT";
+        td.style.color = "green";
+      } else {
+        td.innerHTML = "ABSENT";
+        td.style.color = "red";
+
+        // Get student name from input
+        let name = td.parentElement.cells[1].children[0].value;
+        let phone = phoneNumbers[rollNo];
+
+        // Open SMS app with pre-filled message
+        let message = `Student ${name} (Roll No: ${rollNo}) is ABSENT today.`;
+        window.location.href = `sms:${phone}?body=${encodeURIComponent(message)}`;
+      }
+    }
+  </script>
+</body>
+</html>
